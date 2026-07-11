@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Read Aloud — Lessac High Edition</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">PRIVATE · OFFLINE · LESSAC HIGH VOICE</p>
+        <h1>Read Aloud</h1>
+        <p class="subtitle">Paste your draft, highlight a sentence, then press <kbd>F8</kbd>.</p>
+      </div>
+      <div class="status-card" aria-live="polite">
+        <span id="statusDot" class="dot loading"></span>
+        <div>
+          <strong id="statusTitle">Loading voice…</strong>
+          <span id="statusDetail">The first launch can take several seconds.</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="editor-card">
+      <label for="draft">Your draft</label>
+      <textarea id="draft" spellcheck="true" autofocus placeholder="Paste text here. Select a sentence and press F8 to hear it."></textarea>
+      <div class="selection-row">
+        <span id="selectionInfo">Nothing selected. F8 will read the sentence at the cursor.</span>
+        <button id="clearButton" class="quiet" type="button">Clear</button>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Read aloud controls">
+      <button id="readButton" class="primary" type="button" disabled>
+        <span aria-hidden="true">▶</span> Read selection
+      </button>
+      <button id="stopButton" type="button" disabled>
+        <span aria-hidden="true">■</span> Stop
+      </button>
+      <label class="speed-control" for="speed">
+        Speed
+        <input id="speed" type="range" min="0.65" max="1.45" step="0.05" value="1">
+        <output id="speedValue" for="speed">1.00×</output>
+      </label>
+    </section>
+
+    <section class="privacy-note">
+      <strong>No internet is used.</strong>
+      Text stays in this browser tab. Generated audio is played from memory and discarded.
+    </section>
+
+    <details class="help">
+      <summary>Keyboard and troubleshooting</summary>
+      <p><kbd>F8</kbd> reads the highlighted text. With no selection, it reads the sentence surrounding the cursor. <kbd>Esc</kbd> stops playback.</p>
+      <p>If the voice never becomes ready, close this page, relaunch the program, and keep the <code>shared</code> folder beside the launcher.</p>
+    </details>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
