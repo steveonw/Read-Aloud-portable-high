@@ -107,3 +107,9 @@ SHERPA_TAG=v1.13.4 MODEL_URL=https://... ./scripts/build_all.sh
 The launcher binds only to `127.0.0.1`. The browser loads local files from that
 loopback server. Text is passed only to the in-page WASM worker, and generated
 audio is played from memory rather than saved.
+
+## Switching between voice editions
+
+This edition uses its own localhost origin (`127.0.0.1:17392`) and revalidates browser assets before use. This prevents the browser from mixing cached Amy and Lessac files when both portable editions are installed on the same computer.
+
+Open the matching `START` launcher. Do not open `shared/index.html` directly with `file://`; browsers block the module worker and WASM data loading in that mode.

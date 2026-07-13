@@ -15,8 +15,12 @@ let ready = false;
 let generating = false;
 let audioContext = null;
 let currentSource = null;
+let worker = null;
+const openedDirectly = window.location.protocol === 'file:';
 
-const worker = new Worker('sherpa-onnx-tts.worker.js', {type: 'module'});
+if (!openedDirectly) {
+  worker = new Worker('sherpa-onnx-tts.worker.js', {type: 'module'});
+}
 
 function setStatus(kind, title, detail) {
   statusDot.className = `dot ${kind}`;
@@ -129,6 +133,10 @@ function requestSpeech() {
   generating = true;
   updateButtons();
   setStatus('loading', 'Generating speech…', text.length > 180 ? 'Long selections take a little longer.' : 'Lessac High is preparing the sentence.');
+  if (!worker) {
+    setStatus('error', 'Start with the launcher', 'Do not open shared/index.html directly. Open START - WINDOWS.exe, START - MACOS.app, or START - LINUX.sh.');
+    return;
+  }
   worker.postMessage({
     type: 'generate',
     text,
@@ -137,7 +145,7 @@ function requestSpeech() {
   });
 }
 
-worker.onmessage = async (event) => {
+if (worker) worker.onmessage = async (event) => {
   const message = event.data || {};
   switch (message.type) {
     case 'sherpa-onnx-tts-progress': {
@@ -174,7 +182,7 @@ worker.onmessage = async (event) => {
   }
 };
 
-worker.onerror = (event) => {
+if (worker) worker.onerror = (event) => {
   ready = false;
   generating = false;
   setStatus('error', 'Could not load the voice', event.message || 'Check that the generated WASM files are present.');
@@ -208,9 +216,13 @@ document.addEventListener('keydown', (event) => {
 
 window.addEventListener('beforeunload', () => {
   stopPlayback();
-  worker.terminate();
+  if (worker) worker.terminate();
   if (audioContext) void audioContext.close();
 });
 
 describeSelection();
 updateButtons();
+
+if (openedDirectly) {
+  setStatus('error', 'Start with the launcher', 'This page cannot load the voice from file://. Open the matching START launcher in the parent folder.');
+}

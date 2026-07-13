@@ -22,8 +22,9 @@ import (
 )
 
 const (
-	appName       = "ReadAloud Portable"
-	preferredAddr = "127.0.0.1:17391"
+	appName       = "ReadAloud Lessac High"
+	editionID     = "lessac-high"
+	preferredAddr = "127.0.0.1:17392"
 	idleTimeout   = 30 * time.Minute
 )
 
@@ -99,7 +100,7 @@ func main() {
 	}
 
 	addr := listener.Addr().String()
-	url := "http://" + addr + "/"
+	url := "http://" + addr + "/?edition=" + editionID + "&build=" + appFingerprint
 	logger.Printf("%s %s serving %s from %s", appName, buildVersion, url, sharedDir)
 
 	if !*noBrowser {
@@ -253,7 +254,7 @@ func findExistingServer(shared string) (string, bool) {
 		return "", false
 	}
 	if strings.TrimSpace(string(body)) == "readaloud:"+fp {
-		return "http://" + preferredAddr + "/", true
+		return "http://" + preferredAddr + "/?edition=" + editionID + "&build=" + fp, true
 	}
 	return "", false
 }
@@ -291,9 +292,10 @@ func setHeaders(w http.ResponseWriter, path string) {
 	w.Header().Set("Referrer-Policy", "no-referrer")
 
 	if ext == ".wasm" || ext == ".data" || ext == ".onnx" || ext == ".js" {
-		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		w.Header().Set("Cache-Control", "no-cache, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
 	} else {
-		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Cache-Control", "no-store")
 	}
 }
 
@@ -320,7 +322,7 @@ func newLogger() (*log.Logger, func()) {
 	if err != nil {
 		dir = os.TempDir()
 	}
-	dir = filepath.Join(dir, "readaloud-portable")
+	dir = filepath.Join(dir, "readaloud-portable-"+editionID)
 	_ = os.MkdirAll(dir, 0o700)
 	f, err := os.OpenFile(filepath.Join(dir, "launcher.log"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600)
 	if err != nil {

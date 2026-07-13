@@ -55,7 +55,7 @@ jobs:
       - name: Build Lessac High USB bundle
         env:
           SHERPA_TAG: v1.13.4
-          READALOUD_VERSION: 0.2.0-lessac-high
+          READALOUD_VERSION: 0.3.0-lessac-cache-fix
           VOICE_ID: vits-piper-en_US-lessac-high
           VOICE_DISPLAY_NAME: Lessac High
           MODEL_FILENAME: en_US-lessac-high.onnx
